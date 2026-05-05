@@ -1,0 +1,28 @@
+# prcheck configuration
+# Define rules that map changed file path patterns to PR labels and description templates.
+
+defaultTemplate: 'templates/default.md'
+
+rules:
+  - pattern: 'src/frontend/**'
+    labels:
+      - frontend
+    descriptionTemplate: 'templates/frontend.md'
+
+  - pattern: 'src/backend/**'
+    labels:
+      - backend
+    descriptionTemplate: 'templates/backend.md'
+
+  - pattern: 'infra/**'
+    labels:
+      - infrastructure
+    descriptionTemplate: 'templates/infra.md'
+
+  - pattern: '.github/**'
+    labels:
+      - ci/cd
+
+  - pattern: 'docs/**'
+    labels:
+      - documentation
