@@ -1,0 +1,49 @@
+name: 'prcheck'
+description: 'Enforces PR description templates and labels based on changed file paths'
+author: 'prcheck'
+
+branding:
+  icon: 'check-circle'
+  color: 'blue'
+
+inputs:
+  github-token:
+    description: 'GitHub token for API access'
+    required: true
+    default: ${{ github.token }}
+
+  config-path:
+    description: 'Path to the prcheck configuration file'
+    required: false
+    default: '.prcheck.yml'
+
+  fail-on-violation:
+    description: 'Fail the action if any rule is violated'
+    required: false
+    default: 'true'
+
+outputs:
+  total_rules_evaluated:
+    description: 'Total number of rules evaluated against changed files'
+
+  matched_rules:
+    description: 'Number of rules that matched changed files'
+
+  unmatched_required_rules:
+    description: 'Number of required rules that were not satisfied'
+
+  labels_checked:
+    description: 'Number of labels checked against PR'
+
+  missing_labels:
+    description: 'Number of required labels missing from PR'
+
+  description_valid:
+    description: 'Whether the PR description passed all template checks'
+
+  duration_ms:
+    description: 'Total execution time in milliseconds'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
