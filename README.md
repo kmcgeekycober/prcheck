@@ -49,6 +49,13 @@ rules:
 
 When a PR is opened or updated, `prcheck` will inspect the changed file paths, apply the matching labels, and verify that the PR description follows the required template.
 
+## Configuration
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `token` | Yes | GitHub token used to read PR details and apply labels (`secrets.GITHUB_TOKEN` is sufficient) |
+| `config` | No | Path to the rules config file. Defaults to `.github/prcheck.yml` |
+
 ## Contributing
 
 Pull requests are welcome. Please open an issue first to discuss any major changes.
