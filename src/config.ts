@@ -17,6 +17,25 @@ export interface Config {
 
 const DEFAULT_CONFIG_PATH = '.prcheck.yml';
 
+/**
+ * Validates that each rule in the config has the required fields
+ * and that `paths` is a non-empty array of strings.
+ */
+function validateRules(rules: Rule[]): void {
+  rules.forEach((rule, index) => {
+    if (!Array.isArray(rule.paths) || rule.paths.length === 0) {
+      throw new Error(
+        `Invalid config: rule at index ${index} must have a non-empty "paths" array`
+      );
+    }
+    if (rule.paths.some((p) => typeof p !== 'string')) {
+      throw new Error(
+        `Invalid config: rule at index ${index} has non-string entries in "paths"`
+      );
+    }
+  });
+}
+
 export function loadConfig(configPath?: string): Config {
   const resolvedPath = path.resolve(
     configPath ?? DEFAULT_CONFIG_PATH
@@ -32,6 +51,8 @@ export function loadConfig(configPath?: string): Config {
   if (!parsed || !Array.isArray(parsed.rules)) {
     throw new Error('Invalid config: missing or malformed "rules" array');
   }
+
+  validateRules(parsed.rules);
 
   return {
     fail_on_error: true,
