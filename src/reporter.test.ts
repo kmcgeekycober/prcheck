@@ -53,6 +53,12 @@ describe('reportResults', () => {
     reportResults(invalidResult, { failOnError: false, annotate: false });
     expect(mockedCore.warning).toHaveBeenCalledTimes(invalidResult.errors.length);
   });
+
+  it('does not call core.error or core.warning on valid result', () => {
+    reportResults(validResult, { failOnError: true, annotate: true });
+    expect(mockedCore.error).not.toHaveBeenCalled();
+    expect(mockedCore.warning).not.toHaveBeenCalled();
+  });
 });
 
 describe('reportSummary', () => {
@@ -64,5 +70,12 @@ describe('reportSummary', () => {
     const summary = reportSummary(invalidResult);
     expect(summary).toContain('failed');
     expect(summary).toContain('Missing required labels');
+  });
+
+  it('includes all errors in the summary for invalid result', () => {
+    const summary = reportSummary(invalidResult);
+    invalidResult.errors.forEach((error) => {
+      expect(summary).toContain(error);
+    });
   });
 });
