@@ -50,6 +50,22 @@ describe('getPRContext', () => {
     expect(ctx.changedFiles).toEqual(['src/index.ts', 'README.md']);
   });
 
+  it('returns correct body from PR payload', async () => {
+    mockListFiles.mockResolvedValue({ data: [] });
+
+    const ctx = await getPRContext('fake-token');
+
+    expect(ctx.body).toBe('This PR adds a new feature.\n## Checklist\n- [x] Tests added');
+  });
+
+  it('returns empty changedFiles when PR has no file changes', async () => {
+    mockListFiles.mockResolvedValue({ data: [] });
+
+    const ctx = await getPRContext('fake-token');
+
+    expect(ctx.changedFiles).toEqual([]);
+  });
+
   it('throws when not in a PR context', async () => {
     const github = require('@actions/github');
     github.context.payload.pull_request = undefined;
@@ -62,9 +78,9 @@ describe('getPRContext', () => {
     github.context.payload.pull_request = {
       number: 42,
       title: 'feat: add new feature',
-      body: 'body',
-      labels: [],
-      head: { sha: 'abc123' },
+      body: 'This PR adds a new feature.\n## Checklist\n- [x] Tests added',
+      labels: [{ name: 'enhancement' }, { name: 'ready' }],
+      head: { sha: 'abc123def456' },
     };
   });
 });
@@ -95,6 +111,15 @@ describe('setCheckStatus', () => {
 
     expect(mockCreateCommitStatus).toHaveBeenCalledWith(
       expect.objectContaining({ state: 'failure' })
+    );
+  });
+
+  it('includes the description in the status call', async () => {
+    mockCreateCommitStatus.mockResolvedValue({});
+    await setCheckStatus('fake-token', ctx, true, 'All checks passed');
+
+    expect(mockCreateCommitStatus).toHaveBeenCalledWith(
+      expect.objectContaining({ description: 'All checks passed' })
     );
   });
 });
